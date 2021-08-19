@@ -1,0 +1,2 @@
+
+import { piano } from '../src'
