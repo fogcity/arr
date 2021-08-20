@@ -2,55 +2,67 @@
 type PerfectDegree = 1|4|5|8
 type DefectiveDegree = 2|3|6|7
 type Degree = 1|2|3|4|5|6|7|8
-export const piano: string[] = ['A0','bB0','B0']
+const b12keys = ['C1','bD1','D1','bE1','E1','F1','bG1','G1','bA1','A1','bB1','B1']
 
+export const blackKeys = ['bD','bE','bG','bA','bB']
+
+export const whiteKeys = ['C','D','E','F','G','A','B']
+
+export const piano: string[] = ['A0','bB0','B0',
+...b12keys,
+...b12keys.map(v=>v.slice(0, -1) + '2'),
+...b12keys.map(v=>v.slice(0, -1) + '3'),
+...b12keys.map(v=>v.slice(0, -1) + '4'),
+...b12keys.map(v=>v.slice(0, -1) + '5'),
+...b12keys.map(v=>v.slice(0, -1) + '6'),
+...b12keys.map(v=>v.slice(0, -1) + '7'),
+'C8'
+]
 
 // How to get relevant information on the piano
-export function isBlackKey(degree:string){
-    return degree.length == 3
+export function isBlackKey(key:string){
+    return key.includes("#") || key.includes("b") 
 }
-export function isWhiteKey(degree:string){
-    return degree.length == 2
-}
-export function getMiddleC(){
-    return 'C4'
-}
-export function getBigCharTwoGroup(){
- 
-}
-export function getBigCharOneGroup(){
 
+export function isWhiteKey(key:string){
+    return !isBlackKey(key)
 }
-export function getBigCharGroup(){
-    
+
+export function isIncreasedKey(key:string){
+    return key.includes("#")
 }
-export function getLittleCharGroup(){
-    
+
+export function isDecreasedKey(key:string){
+    return key.includes("b")
 }
-export function getLittleCharOneGroup(){
-    
+
+export function getDecreasedKey(key:string){
+    return isBlackKey(key)?isDecreasedKey(key)?key:increaseSignToDecreaseSign(key):key
 }
-export function getLittleCharTwoGroup(){
-    
+
+export function getIncreasedSign(key:string){
+    return isBlackKey(key)?isIncreasedKey(key)?key:decreaseSignToIncreaseSign(key):key
 }
-export function getLittleCharThreeGroup(){
-    
+
+export function increaseSignToDecreaseSign (key:string) {
+    return key.replace('#','b').replace(key[1],whiteKeys[whiteKeys.indexOf(key[1])+1])
 }
-export function getLittleCharFourGroup(){
-  
+
+export function decreaseSignToIncreaseSign (key:string) {
+    return key.replace('b','#').replace(key[1],whiteKeys[whiteKeys.indexOf(key[1])-1])
 }
 // Related methods for calculating interval relations
 
-export function getSemitone(root:string){
-    return piano[piano.indexOf(root)+1]
+export function getSemitone(key:string){
+    return piano[piano.indexOf(getDecreasedKey(key))+1]
 } 
 
-export function getWholeTone(root:string){
-    return piano[piano.indexOf(root)+2]
+export function getWholeTone(key:string){
+    return piano[piano.indexOf(getDecreasedKey(key))+2]
 } 
 
 export function getIntervalRelations(root:string,target:string){
-    const semitoneCount = Math.abs(piano.indexOf(target) - piano.indexOf(root))
+    const semitoneCount = Math.abs(piano.indexOf(getDecreasedKey(target)) - piano.indexOf(getDecreasedKey(root)))
     switch (semitoneCount) {
         case 0:return 'Perfect 1'
         case 1:return 'Minor 2'
@@ -95,7 +107,6 @@ export function getPerfectInterval(root:string,degree:PerfectDegree){
         case 5:return piano[piano.indexOf(root)+7]
         case 8:return piano[piano.indexOf(root)+12]
     }
-
 }
 
 export function getMajorInterval(root:string,degree:DefectiveDegree){
@@ -125,7 +136,6 @@ export function getIonianScale(root:string){
     return 
 
 }
-// Related methods for scale calculation
 export function getAeolianScale(root:string){
 
 }
@@ -137,10 +147,13 @@ export function getMinorScale(root:string){
     return getAeolianScale(root)
 }
 
-
 // Related methods for chords calculation
-export function getDominant7th(root:string){
+export function getLargeSmall7Chords(root:string){
     return []
+}
+
+export function getDominant7Chords(root:string){
+    return getLargeSmall7Chords(root)
 }
 
 /**
@@ -152,6 +165,6 @@ export function getOvertoneSeries(toneLevel:string){
     const first = getPerfectInterval(toneLevel,8)
     const second = getPerfectInterval(first,5)
     const third = getPerfectInterval(second,4)
-    const [fourth,fifth,sixth,seventh] = getDominant7th(getPerfectInterval(first,8))
+    const [fourth,fifth,sixth,seventh] = getDominant7Chords(getPerfectInterval(first,8))
     return [first,second,third,fourth,fifth,sixth,seventh]
 }
