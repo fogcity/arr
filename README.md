@@ -1,2 +1,2 @@
-# chopin
-Music arranger assistant
+# Arranger Expert
+easily get the arrangement and creation suggestions you want through js
