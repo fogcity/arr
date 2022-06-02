@@ -2,16 +2,16 @@
   "name": "chopin",
   "version": "0.0.1",
   "description": "Music arranger assistant",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "example/build/index.umd.js",
+  "module": "example/build/index.js",
   "files": [
-    "dist"
+    "example/build"
   ],
-  "typings": "dist/index.d.ts",
+  "types": "example/build/index.d.ts",
   "scripts": {
-    "dev": "rollup -wc rollup.config.dev.js",
-    "build:dev": "rollup -c rollup.config.dev.js",
-    "build:prod": "rollup -c rollup.config.prod.js",
+    "dev": "concurrently --kill-others \"rollup -wc rollup.config.js\" \"cd example && npm start\"",
+    "build:dev": "cross-env NODE_ENV=development rollup -c rollup.config.js",
+    "build:prod": "cross-env NODE_ENV=production && npm run lint && npm run test && rollup -c rollup.config.js",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
@@ -20,7 +20,8 @@
     "url": "git+https://github.com/fogcity/chopin.git"
   },
   "keywords": [
-    "arranger"
+    "arranger",
+    "music","tone"
   ],
   "author": {
     "name": "obito",
@@ -42,6 +43,8 @@
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@size-limit/preset-small-lib": "^5.0.1",
     "prettier": "^2.3.2",
+    "concurrently": "^7.0.0",
+    "cross-env": "^7.0.3",
     "rollup": "^2.53.3",
     "rollup-plugin-filesize": "^9.1.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
